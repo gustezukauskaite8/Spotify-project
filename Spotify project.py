@@ -2,10 +2,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.express as px
 
 
 
-data = pd.read_csv('artist_data.csv')
+data = pd.read_csv('data/artist_data.csv')
 
 def unique_arists(df):
     result = df['name'].nunique()
@@ -101,12 +102,36 @@ def plot_genre_boxplot(df):
     plt.show()
 
 
-#scatterplot_popularity(data)
+ # Artist Tier popularity and Folowers
+def plot_artist_tiers(df):
+
+    bins = [0, 1000, 10000, 100000, 1000000, float('inf')]
+    labels = ['Garage', 'Local', 'Regional', 'National', 'Global']
+    df['Artist_Tier'] = pd.cut(df['followers'], bins=bins, labels=labels)
+
+    # 2. Calculate the average popularity per tier
+    tier_means = df.groupby('Artist_Tier', observed=True)['artist_popularity'].mean()
+
+
+    plt.figure(figsize=(10, 6))
+    tier_means.plot(kind='bar', color='skyblue', edgecolor='black')
+    
+    plt.title("Executive Insight: Average Popularity Across Artist Tiers")
+    plt.xlabel("Artist Market Tier (Based on Followers)")
+    plt.ylabel("Average Popularity Score (0-100)")
+    plt.xticks(rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    plt.tight_layout() 
+    plt.show()
+
+plot_artist_tiers(data)
+
+
+scatterplot_popularity(data)
 #plot_circular_bars(data)
 #print(top10_followers(data))
 #print(topfollow_barcharts(data))
-data = genre_count(data)
-print(top10_genre('pop',data))
-plot_genre_boxplot(data)
-
-
+#data = genre_count(data)
+#print(top10_genre('pop',data))
+#plot_genre_boxplot(data) 
