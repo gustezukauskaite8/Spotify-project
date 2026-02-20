@@ -19,10 +19,8 @@ df_nirvana = pd.read_sql_query(query, connection)
 stats = df_nirvana[['danceability', 'loudness']].describe()
 cv_dance = stats.loc['std', 'danceability'] / stats.loc['mean', 'danceability']
 cv_loudness = stats.loc['std', 'loudness'] / stats.loc['mean', 'loudness']
-print(stats)
-print(f"Danceability Coefficient of Variation: {cv_dance:.3f}")
-print(f"Loudness Coefficient of Variation: {cv_loudness:.3f}")
 
+#PLot and Stats Danceablity and loudness
 df_nirvana.plot(x='track_name', y='danceability', kind='bar', legend=False)
 plt.title('Danceability')
 plt.ylabel('Score (0-1)')
@@ -33,6 +31,11 @@ plt.title('Loudness')
 plt.ylabel('Decibels (dB)')
 plt.show()
 
+print(f"Dancebility and loudness statistics")
+print(stats)
+print(f"Danceability Coefficient of Variation: {cv_dance:.3f}")
+print(f"Loudness Coefficient of Variation: {cv_loudness:.3f}")
+
 #Artist vs album popularity
 query_album = """
 SELECT DISTINCT album_id, album_popularity, artist_popularity
@@ -42,25 +45,13 @@ JOIN artist_data r ON a.artist_id = r.id
 df_popularity = pd.read_sql_query(query_album, connection)
 
 
-correlation_artist_album = df_popularity['artist_popularity'].corr(df_popularity['album_popularity'])
-print(f"Correlation: {correlation_artist_album:.3f}")
-
+#Plot: Popularity album vs artist
 df_popularity.plot(kind='scatter', x='artist_popularity', y='album_popularity', alpha=0.5)
 plt.title(f'Album vs Artist Popularity')
 plt.xlabel('Artist Popularity')
 plt.ylabel('Album Popularity')
 plt.show()
+correlation_artist_album = df_popularity['artist_popularity'].corr(df_popularity['album_popularity'])
+print(f"Correlation: album vs artist popularity: {correlation_artist_album:.3f}")
 
-#Danceability analysis
-query_danceability = """
-SELECT 
-    f.danceability, 
-    t.track_popularity, 
-    a.artist_0 AS artist_name
-FROM features_data f
-JOIN tracks_data t ON f.id = t.id
-JOIN albums_data a ON f.id = a.track_id
-"""
-
-df_danceability = pd.read_sql_query(query, connection)
 connection.close()
