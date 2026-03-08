@@ -33,6 +33,7 @@ features_to_plot = ['energy', 'danceability', 'acousticness', 'valence']
 # Used AI to figure out how to connect to previous dataframe
 plot_data = era_profile.reset_index()
 
+
 for feature in features_to_plot:
     plt.figure(figsize=(10, 6))
 
