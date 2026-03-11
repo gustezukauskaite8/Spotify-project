@@ -40,3 +40,7 @@ Colour Scheme:
 -graph colour: #753696
 -highlight colour:#E2B4BD
 -text colour:#220C10
+o 
+
+- Visualize Rising artists (high popularity but low followers)
+- Music evolution over time (through trends)
