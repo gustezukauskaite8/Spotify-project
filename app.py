@@ -9,12 +9,18 @@ import sqlite3
 
 connection = sqlite3.connect('data/spotify_clean.db')
 query = f"SELECT * FROM artist_data"
+home_page = st.Page("dashboard_home.py", title="Main overview", default=True)
+artist_page = st.Page("pages/artists_app.py", title="Artists")
+features_page = st.Page("pages/features_app.py", title="Features")
+genres_page = st.Page("pages/genres_app.py", title="Genres")
 
 cursor = connection.cursor()
 cursor.execute(query)
+pg = st.navigation([home_page, artist_page, features_page,genres_page ])
 
 rows = cursor.fetchall()
 data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
+st.set_page_config(page_title="Spotify Dashboard", layout="wide")
 
 # 1. Page Configuration (Looks professional for "Spotify Owners")
 st.set_page_config(page_title="Spotify Dashboar", layout="wide")
@@ -44,3 +50,4 @@ with col2:
     over_performers = selected_data.nlargest(10, 'residual')[['name', 'artist_popularity', 'followers']]
     st.write("Top 10 Artists Outperforming their Fanbase:")
     st.table(over_performers)
+pg.run()
