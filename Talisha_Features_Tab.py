@@ -4,7 +4,6 @@ import sqlite3
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-
 def load_features_data():
     conn = sqlite3.connect('data/spotify_database.db')
     query = """
@@ -26,6 +25,7 @@ df = load_features_data()
 st.sidebar.title("Feature Analysis")
 features_list = ['danceability', 'energy', 'acousticness', 'valence', 'speechiness', 'tempo', 'key', 'instrumentalness', 'liveness']
 selected_feature = st.sidebar.selectbox("Select a Feature", features_list)
+
 
 st.header(f"Analysis of {selected_feature.capitalize()}")
 
