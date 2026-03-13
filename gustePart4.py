@@ -6,7 +6,7 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-db_path = os.path.join('data', 'spotify_database.db')
+db_path = os.path.join('data', 'data/spotify_database.db')
 connection = sqlite3.connect(db_path)
 
 ##########################################################################################################################

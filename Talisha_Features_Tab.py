@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 def load_features_data():
-    conn = sqlite3.connect('spotify_database.db')
+    conn = sqlite3.connect('data/spotify_database.db')
     query = """
     SELECT 
         a.release_date, 

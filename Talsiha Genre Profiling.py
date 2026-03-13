@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-connection = sqlite3.connect('spotify_database.db')
+connection = sqlite3.connect('data/spotify_database.db')
 query_genre = """
 SELECT 
     r.genre_0 as genre, 
