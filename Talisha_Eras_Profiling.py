@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # 1. Connect and join data
-connection = sqlite3.connect('data/spotify_cleaned.db')
+connection = sqlite3.connect('spotify_cleaned.db')
 query = """
 SELECT a.release_date, a.track_name, art.name AS artist_name, 
        art.artist_popularity, a.album_popularity, 

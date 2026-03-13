@@ -1,53 +1,53 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import plotly.express as px
-import statsmodels.api as sm
-from Spotify_project import plot_circular_bars
 import sqlite3
-import time
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+def load_features_data():
+    conn = sqlite3.connect('spotify_database.db')
+    query = """
+    SELECT 
+        a.release_date, 
+        a.track_name, 
+        t.track_popularity,
+        f.danceability, f.energy, f.acousticness, f.valence, f.speechiness, f.loudness, f.tempo, f.key, f.instrumentalness, f.liveness
+    FROM albums_data a
+    JOIN tracks_data t ON a.track_id = t.id
+    JOIN features_data f ON a.track_id = f.id
+    """
+    df = pd.read_sql(query, conn)
+    df['release_date'] = pd.to_datetime(df['release_date'], errors='coerce')
+    df['year'] = df['release_date'].dt.year
+    conn.close()
+    return df
+df = load_features_data()
+st.sidebar.title("Feature Analysis")
+features_list = ['danceability', 'energy', 'acousticness', 'valence', 'speechiness', 'tempo', 'key', 'instrumentalness', 'liveness']
+selected_feature = st.sidebar.selectbox("Select a Feature", features_list)
 
 
-connection = sqlite3.connect('data/spotify_cleaned.db')
-query = f"SELECT * FROM artist_data"
-
-cursor = connection.cursor()
-cursor.execute(query)
-
-rows = cursor.fetchall()
-data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
-
-st.set_page_config(page_title="Spotify Dashboar", layout="wide")
-
-st.title("🎵 Spotify 2023 Strategy Dashboard")
-st.markdown("---")
+st.header(f"Analysis of {selected_feature.capitalize()}")
 
 
-# 3. Sidebar Navigation (Satisfies "Ease of Use" rubric)
-st.sidebar.header("Filter Options")
+avg_score = df[selected_feature].mean()
+st.metric(label=f"Global Average {selected_feature.capitalize()}", value=f"{avg_score:.3f}")
 
-st.sidebar.page_link("app.py", label="Home", icon="🏠")
-st.sidebar.page_link("artists_app.py", label="Page 1", icon="1️⃣")
+st.subheader(f"Top 5 Songs: Highest {selected_feature.capitalize()}")
+top_5_features = df.nlargest(5, selected_feature)[['track_name', selected_feature, 'track_popularity']]
+st.table(top_5_features.reset_index(drop=True))
 
-st.sidebar.page_link("http://www.google.com", label="Google", icon="🌎")
+st.subheader("Feature Evolution Over Time")
+evolution = df.groupby('year')[selected_feature].mean().reset_index()
+fig_line = px.line(evolution, x='year', y=selected_feature, title=f"{selected_feature} Trends (1960-2023)")
+st.plotly_chart(fig_line, use_container_width=True)
 
-min_pop = st.sidebar.slider("Minimum Popularity", 0, 100, 50)
-selected_data = data[data['artist_popularity'] >= min_pop]
+st.subheader(f"Correlation: {selected_feature.capitalize()} vs Others")
 
 
-
-# 5. Dashboard Layout: Columns
-col1, col2 = st.columns(2)
-
-with col1:
-    st.subheader("Popularity vs. Followers (OLS)")
-    # Using Plotly for interactivity (Hover to see names!)
-    fig = plot_circular_bars(data)
-    st.pyplot(fig)
-
-with col2:
-    st.subheader("🚀 The Viral Radar (Creative Insight)")
-    # Showing over-performers (high residuals)
-    over_performers = selected_data.nlargest(10, 'residual')[['name', 'artist_popularity', 'followers']]
-    st.write("Top 10 Artists Outperforming their Fanbase:")
-    st.table(over_performers)
+corr_matrix = df[features_list].corr()
+feature_corr = corr_matrix[[selected_feature]].sort_values(by=selected_feature, ascending=False)
+fig_heat, ax = plt.subplots(figsize=(8, 6))
+sns.heatmap(feature_corr, annot=True, cmap='coolwarm', center=0, ax=ax)
+ax.set_title(f"How {selected_feature} correlates with other features")
+st.pyplot(fig_heat)
