@@ -34,3 +34,13 @@ o Feature overview (maybe with the boxplots)
 o Something about genres ( maybe pie chart with proportion of the genres)
 o Compare 2 artists
 o
+
+Colour Scheme:
+-base colours: #83AD6C,#506E40
+-graph colour: #753696
+-highlight colour:#E2B4BD
+-text colour:#220C10
+o 
+
+- Visualize Rising artists (high popularity but low followers)
+- Music evolution over time (through trends)

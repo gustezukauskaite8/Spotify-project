@@ -58,5 +58,4 @@ def create_cleaned_database(source_db, target_db):
     print("✅ Done! Your dashboard can now use the cleaned database.")
 
 if __name__ == "__main__":
-    create_cleaned_database('data/spotify_database.db', 'data/spotify_clean.db')
-    
+    create_cleaned_database('data/spotify_database.db', 'data/spotify_cleaned.db')
