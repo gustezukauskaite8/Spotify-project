@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # 1. Connect and Join Data
-connection = sqlite3.connect('spotify_database.db')
+connection = sqlite3.connect('data/spotify_database.db')
 query = """
 SELECT a.release_date, f.danceability, f.energy, f.acousticness, f.valence, f.speechiness
 FROM albums_data a
@@ -32,6 +32,7 @@ features_to_plot = ['energy', 'danceability', 'acousticness', 'valence']
 
 # Used AI to figure out how to connect to previous dataframe
 plot_data = era_profile.reset_index()
+
 
 for feature in features_to_plot:
     plt.figure(figsize=(10, 6))

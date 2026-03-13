@@ -9,11 +9,6 @@ import sqlite3
 
 connection = sqlite3.connect('data/spotify_clean.db')
 query = f"SELECT * FROM artist_data"
-home_page = st.Page("dashboard_home.py", title="Main overview", default=True)
-artist_page = st.Page("pages/artists_app.py", title="Artists")
-features_page = st.Page("pages/features_app.py", title="Features")
-genres_page = st.Page("pages/genres_app.py", title="Genres")
-
 cursor = connection.cursor()
 cursor.execute(query)
 pg = st.navigation([home_page, artist_page, features_page,genres_page ])

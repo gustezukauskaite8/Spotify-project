@@ -5,6 +5,7 @@ import os
 
 def create_cleaned_database(source_db, target_db):
     print("🚀 Starting data cleaning process...")
+    source_db = 'spotify_database.db'
     conn = sqlite3.connect(source_db)
     
     # 1. CLEAN ARTISTS

@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-db_path = os.path.join('data', 'spotify_database.db')
+db_path = os.path.join('data', 'data/spotify_database.db')
 connection = sqlite3.connect(db_path)
 
 df_albums = pd.read_sql_query("SELECT * FROM albums_data", connection)
