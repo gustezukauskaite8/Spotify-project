@@ -5,6 +5,7 @@ import os
 
 def create_cleaned_database(source_db, target_db):
     print("🚀 Starting data cleaning process...")
+    source_db = 'spotify_database.db'
     conn = sqlite3.connect(source_db)
     
     # 1. CLEAN ARTISTS
@@ -48,10 +49,10 @@ def create_cleaned_database(source_db, target_db):
     print(f"💾 Saving cleaned data to {target_db}...")
     clean_conn = sqlite3.connect(target_db)
     
-    df_artists_cleaned.to_sql('artists', clean_conn, if_exists='replace', index=False)
-    df_albums.to_sql('albums', clean_conn, if_exists='replace', index=False)
-    df_tracks.to_sql('tracks', clean_conn, if_exists='replace', index=False)
-    df_features.to_sql('features', clean_conn, if_exists='replace', index=False)
+    df_artists_cleaned.to_sql('artist_data', clean_conn, if_exists='replace', index=False)
+    df_albums.to_sql('albums_data', clean_conn, if_exists='replace', index=False)
+    df_tracks.to_sql('tracks_data', clean_conn, if_exists='replace', index=False)
+    df_features.to_sql('features_data', clean_conn, if_exists='replace', index=False)
     
     clean_conn.close()
     print("✅ Done! Your dashboard can now use the cleaned database.")

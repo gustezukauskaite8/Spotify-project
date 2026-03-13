@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-connection = sqlite3.connect('data/spotify_database.db')
+connection = sqlite3.connect('spotify_database.db')
 
 query = """
 SELECT t.track_popularity, a.release_date, f.valence, f.energy

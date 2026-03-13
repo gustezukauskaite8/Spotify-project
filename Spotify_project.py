@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sqlite3
 
-connection = sqlite3.connect('data/spotify_database.db')
+connection = sqlite3.connect('spotify_database.db')
 query = f"SELECT * FROM artist_data"
 
 cursor = connection.cursor()
