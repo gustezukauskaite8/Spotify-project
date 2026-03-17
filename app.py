@@ -7,7 +7,7 @@ from Spotify_project import plot_circular_bars
 import sqlite3
 
 
-connection = sqlite3.connect('data/spotify_clean.db')
+connection = sqlite3.connect('data/spotify_cleaned.db')
 query = f"SELECT * FROM artist_data"
 cursor = connection.cursor()
 cursor.execute(query)
