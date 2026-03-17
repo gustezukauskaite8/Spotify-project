@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#E2B4BD"          # Highlight (Pink) for buttons/sliders
+backgroundColor = "#83AD6C"       # Base light green
+secondaryBackgroundColor = "#506E40" # Sidebar (Darker green)
+textColor = "#220C10"            # Dark brown/burgundy text
+font = "sans serif"

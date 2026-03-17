@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # Talisha
 
 # 1. Connect and Join Data
-connection = sqlite3.connect('spotify_database.db')
+connection = sqlite3.connect('data/spotify_database.db')
 query = """
 SELECT a.release_date, f.danceability, f.energy, f.acousticness, f.valence, f.speechiness
 FROM albums_data a
