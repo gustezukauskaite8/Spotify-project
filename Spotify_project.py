@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sqlite3
 
-connection = sqlite3.connect('data/spotify_database.db')
+connection = sqlite3.connect('data/spotify_cleaned.db')
 query = f"SELECT * FROM artist_data"
 
 cursor = connection.cursor()
@@ -15,12 +15,12 @@ rows = cursor.fetchall()
 data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
 
 def unique_arists(df):
-    result = df['name'].nunique()
+    result = df['artist_name'].nunique()
     return print(result)
 
 def top10_followers(df):
     large10_followers = df.nlargest(10, "followers")
-    return large10_followers[['name', 'followers']]
+    return large10_followers[['artist_name', 'followers']]
 
 
 def top10_popularity_chart(df):
@@ -100,27 +100,45 @@ def relation_popularity_followers(df):
     plt.show()
 
 
-def over_performers(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
 
+def over_performers(df):
+    # 1. Deduplicate: One row per artist with their max stats
+    # We filter for popularity > 5 to remove 'junk' uploads like 'dumbbb...'
+    df_unique = df[df['artist_popularity'] > 5].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
+
+    # 2. Run Regression on unique artists
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    over_performers = df.sort_values(by = "residual", ascending = False).head(10)
-    print("\n Over-Performers (High Popularity - Low Followers)")
-    print(over_performers[["name", "artist_popularity", "followers"]])
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique over-performers
+    return df_unique.sort_values(by="residual", ascending=False).head(3)[["artist_name", "artist_popularity", "followers"]]
 
 def legacy_artists(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
+    # 1. Deduplicate: One row per artist
+    # We filter followers > 1000 so we only look at established artists
+    df_unique = df[df['followers'] > 1000].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
 
+    # 2. Run Regression
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    legacy_artist = df.sort_values(by = "residual", ascending = True).head(10)
-    print("\n Legacy artists (Low Popularity - High Followers)")
-    print(legacy_artist[["name", "artist_popularity", "followers"]])
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique legacy artists
+    return df_unique.sort_values(by="residual", ascending=True).head(3)[["artist_name", "artist_popularity", "followers"]]
+
 
 #Talisha part 1
 def top10_genre(genre,df):
