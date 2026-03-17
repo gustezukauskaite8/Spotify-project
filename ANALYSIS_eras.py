@@ -1,8 +1,11 @@
-
 import sqlite3
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+
+##########################################################################################################################
+# Talisha
 
 # 1. Connect and Join Data
 connection = sqlite3.connect('data/spotify_database.db')

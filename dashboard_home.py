@@ -1,11 +1,11 @@
 import streamlit as st
-from Spotify_project import *
+from ANALYSIS_popularity import *
 
 st.set_page_config(page_title="Spotify 2023 Global Overview", layout="wide")
 #AI Usage: figure out hpw to make the different querys for each necessary df
 @st.cache_data
 def load_dashboard_data():
-    conn = sqlite3.connect('data/spotify_cleaned.db')
+    conn = sqlite3.connect('data/data/spotify_cleaned.db')
 
 
     n_artists = pd.read_sql("SELECT COUNT(DISTINCT id) FROM artist_data", conn).iloc[0, 0]
@@ -86,3 +86,5 @@ with col_right:
     st.write("**Top 10 by Followers**")
     fig_foll = top10_follower_chart(top_pop_df)
     st.pyplot(fig_foll)
+
+
