@@ -9,9 +9,16 @@ import sqlite3
 
 connection = sqlite3.connect('data/spotify_clean.db')
 query = f"SELECT * FROM artist_data"
+home_page = st.Page("dashboard_home.py", title="Main overview", default=True)
+artist_page = st.Page("pages/artists_app.py", title="Artists")
+features_page = st.Page("pages/features_app.py", title="Features")
+genres_page = st.Page("pages/genres_app.py", title="Genres")
+ai_analyst = st.Page("pages/ai_analyst.py", title="Ask the AI analyst")
+eras_page = st.Page("pages/eras_app.py", title="Eras")
+
 cursor = connection.cursor()
 cursor.execute(query)
-pg = st.navigation([home_page, artist_page, features_page,genres_page ])
+pg = st.navigation([home_page, artist_page, features_page,genres_page, ai_analyst, eras_page ])
 
 rows = cursor.fetchall()
 data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
