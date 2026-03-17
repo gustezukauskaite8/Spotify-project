@@ -22,14 +22,22 @@ def top10_followers(df):
     large10_followers = df.nlargest(10, "followers")
     return large10_followers[['artist_name', 'followers']]
 
-def top10_popularity(df):
-    large10_popularity = df.nlargest(10, "artist_popularity")
-    return large10_popularity[['name', 'artist_popularity']]
 
-def topfollow_barcharts(df):
-    largest_followers_plot= top10_followers(df).plot(kind="bar")
-    return largest_followers_plot
+def top10_popularity_chart(df):
+    fig, ax = plt.subplots(figsize=(8, 5))
+    top10 = df.nlargest(10, "artist_popularity")
+    ax.barh(top10['name'], top10['artist_popularity'], color='skyblue')
+    ax.set_title("Top 10 Artists by Popularity")
+    ax.invert_yaxis()
+    return fig
 
+def top10_follower_chart(df):
+    fig, ax = plt.subplots(figsize=(8, 5))
+    top10 = df.nlargest(10, "followers")
+    ax.barh(top10['name'], top10['followers'], color= '#83AD6C')
+    ax.set_title("Top 10 Artists by Followers")
+    ax.invert_yaxis()
+    return fig
 
 
 

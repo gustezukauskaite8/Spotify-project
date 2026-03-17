@@ -8,7 +8,7 @@ import seaborn as sns
 # Album of choice, features of it, consistent features such as danceability, loudness, energy, tempo
 # AI usage: fixing the database path, query, and feature analysis plot
 
-db_path = os.path.join('data', 'spotify_database.db')
+db_path = os.path.join('data', 'data/spotify_database.db')
 connection = sqlite3.connect(db_path)
 
 query_features = """
