@@ -18,7 +18,7 @@ def create_cleaned_database(source_db, target_db):
     
     # Drop rows missing essential info
     df_artists = df_artists.dropna(subset=['id', 'name'])
-    
+    df_artists = df_artists[df_artists['name'].str.lower() != 'various artists']
     # Standardize names for deduplication
     df_artists['name_clean'] = df_artists['name'].str.lower().str.strip()
     
