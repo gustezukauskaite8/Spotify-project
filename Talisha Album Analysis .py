@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#Importing Database
+
 #AI Usage: Figuring out how to format the query and create an adjusted data frame
 database = 'spotify_database.db'
 connection = sqlite3.connect(database)
@@ -15,12 +15,11 @@ ORDER BY a.track_number
 """
 df_nirvana = pd.read_sql_query(query, connection)
 
-#Danceability and loudness consistency
+
 stats = df_nirvana[['danceability', 'loudness']].describe()
 cv_dance = stats.loc['std', 'danceability'] / stats.loc['mean', 'danceability']
 cv_loudness = stats.loc['std', 'loudness'] / stats.loc['mean', 'loudness']
 
-#PLot and Stats Danceablity and loudness
 df_nirvana.plot(x='track_name', y='danceability', kind='bar', legend=False)
 plt.title('Danceability')
 plt.ylabel('Score (0-1)')
@@ -45,7 +44,6 @@ JOIN artist_data r ON a.artist_id = r.id
 df_popularity = pd.read_sql_query(query_album, connection)
 
 
-#Plot: Popularity album vs artist
 df_popularity.plot(kind='scatter', x='artist_popularity', y='album_popularity', alpha=0.5)
 plt.title(f'Album vs Artist Popularity')
 plt.xlabel('Artist Popularity')
