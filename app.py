@@ -1,46 +1,82 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import plotly.express as px
-import statsmodels.api as sm
-from Spotify_project import plot_circular_bars
 import sqlite3
+import os
 
+st.set_page_config(page_title="Spotify Dashboard", layout="wide")
 
-connection = sqlite3.connect('data/spotify_clean.db')
-query = f"SELECT * FROM artist_data"
+# --- 1. THE DIAGNOSTIC TEST ---
+def run_db_diagnostic():
+    db_path = 'data/spotify_database.db'
+    st.sidebar.subheader("Connection Diagnostics")
+    
+    if os.path.exists(db_path):
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Get table names
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = [t[0] for t in cursor.fetchall()]
+        st.sidebar.write(f"✅ Found Tables: `{tables}`")
+        
+        # Get column names for 'artist_data'
+        if 'artist_data' in tables:
+            cursor.execute("PRAGMA table_info(artist_data);")
+            columns = [col[1] for col in cursor.fetchall()]
+            st.sidebar.write(f"✅ Found Columns: `{columns}`")
+        else:
+            st.sidebar.error("❌ Table 'artist_data' NOT found in DB!")
+            
+        conn.close()
+    else:
+        st.sidebar.error(f"❌ Database file not found at: {db_path}")
 
-cursor = connection.cursor()
-cursor.execute(query)
+# Run the test in the sidebar so it's always visible while you develop
+run_db_diagnostic()
 
-rows = cursor.fetchall()
-data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
+# --- 2. DATA LOADING ---
+@st.cache_data
+def load_data():
+    conn = sqlite3.connect('data/spotify_database.db')
+    try:
+        df = pd.read_sql_query("SELECT * FROM artist_data", conn)
+        return df
+    except Exception as e:
+        st.error(f"SQL Error: {e}")
+        return pd.DataFrame()
+    finally:
+        conn.close()
 
-# 1. Page Configuration (Looks professional for "Spotify Owners")
-st.set_page_config(page_title="Spotify Dashboar", layout="wide")
+data = load_data()
 
-st.title("🎵 Spotify 2023 Strategy Dashboard")
-st.markdown("---")
+# --- 3. THE "WHAT AM I SEEING?" TEST ---
+with st.expander("🔍 Inspect Raw Data Schema (Debug)"):
+    if not data.empty:
+        st.write("### DataFrame Info")
+        st.write(f"Total Rows: {len(data)}")
+        st.write("Column Names Found by Pandas:")
+        st.json(list(data.columns))
+        st.write("First 5 rows of data:")
+        st.dataframe(data.head())
+    else:
+        st.warning("DataFrame is currently empty.")
 
-# 3. Sidebar Navigation (Satisfies "Ease of Use" rubric)
-st.sidebar.header("Filter Options")
-min_pop = st.sidebar.slider("Minimum Popularity", 0, 100, 50)
-selected_data = data[data['artist_popularity'] >= min_pop]
+# --- 4. MAIN APP LOGIC ---
+st.title("🎵 Spotify Artist Analytics")
 
-
-
-# 5. Dashboard Layout: Columns
-col1, col2 = st.columns(2)
-
-with col1:
-    st.subheader("Popularity vs. Followers (OLS)")
-    # Using Plotly for interactivity (Hover to see names!)
-    fig = plot_circular_bars(data)
-    st.pyplot(fig)
-
-with col2:
-    st.subheader("🚀 The Viral Radar (Creative Insight)")
-    # Showing over-performers (high residuals)
-    over_performers = selected_data.nlargest(10, 'residual')[['name', 'artist_popularity', 'followers']]
-    st.write("Top 10 Artists Outperforming their Fanbase:")
-    st.table(over_performers)
+if not data.empty:
+    # Use a case-insensitive check to be safe
+    cols_lower = [c.lower() for c in data.columns]
+    
+    if 'artist_popularity' in cols_lower:
+        # Find the actual case-sensitive name
+        idx = cols_lower.index('artist_popularity')
+        real_col_name = data.columns[idx]
+        
+        min_pop = st.slider("Select Min Popularity", 0, 100, 50)
+        filtered = data[data[real_col_name] >= min_pop]
+        st.success(f"Showing {len(filtered)} artists")
+        st.dataframe(filtered)
+    else:
+        st.error("The column 'artist_popularity' is missing from the database.")
+        st.info(f"Available columns are: {list(data.columns)}")

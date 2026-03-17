@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
-from Spotify_project import *
+from ANALYSIS_popularity import *
 st.set_page_config(page_title="Spotify 2023 Analysis", layout="wide")
 
 
 @st.cache_data
 def load_dashboard_data():
-    conn = sqlite3.connect('spotify_database.db')
+    conn = sqlite3.connect('data/spotify_database.db')
 
     n_artists = pd.read_sql("SELECT COUNT(DISTINCT id) FROM artist_data", conn).iloc[0, 0]
     n_songs = pd.read_sql("SELECT COUNT(DISTINCT track_id) FROM albums_data", conn).iloc[0, 0]
@@ -69,3 +69,5 @@ with col_right:
     st.write("**By Followers**")
     fig_foll = top10_follower_chart(top_pop)
     st.pyplot(fig_foll)
+
+
