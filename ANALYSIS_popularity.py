@@ -267,30 +267,45 @@ def relation_popularity_followers(df):
     plt.title("Popularity VS Logarithm of Followers")
     plt.show()
 
-
 def over_performers(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
+    # 1. Deduplicate: One row per artist with their max stats
+    # We filter for popularity > 5 to remove 'junk' uploads like 'dumbbb...'
+    df_unique = df[df['artist_popularity'] > 5].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
 
+    # 2. Run Regression on unique artists
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    over_performers = df.sort_values(by = "residual", ascending = False).head(10)
-    print("\n Over-Performers (High Popularity - Low Followers)")
-    result = over_performers[["artist_name", "artist_popularity", "followers"]]
-    return result
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique over-performers
+    return df_unique.sort_values(by="residual", ascending=False).head(3)[["artist_name", "artist_popularity", "followers"]]
+
+
 
 def legacy_artists(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
+    # 1. Deduplicate: One row per artist
+    # We filter followers > 1000 so we only look at established artists
+    df_unique = df[df['followers'] > 1000].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
 
+    # 2. Run Regression
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    legacy_artist = df.sort_values(by = "residual", ascending = True).head(10)
-    print("\n Legacy artists (Low Popularity - High Followers)")
-    result = legacy_artist[["artist_name", "artist_popularity", "followers"]]
-    return result
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique legacy artists
+    return df_unique.sort_values(by="residual", ascending=True).head(3)[["artist_name", "artist_popularity", "followers"]]
 
 
 ##########################################################################################################################
@@ -327,4 +342,19 @@ if __name__ == "__main__":
 
 
 connection.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
