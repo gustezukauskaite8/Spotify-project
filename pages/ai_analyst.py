@@ -82,20 +82,37 @@ if st.session_state.get('data_loaded'):
         #AI usage: to help finish the prompt
         prefix = f"""
         You are a professional Spotify Data Consultant and Data Engineer.
-        
+
+        You will be asked questions on a given dataframe consisting of filtered Spotify data.
+        The dataframe will be filtered on two criteria listed below:
+        FILTERS:
+        1. Eras/Decades: {era_choices}
+        2. Artists: {artist_filter}
+
+        The dataframe has the following columns
         COLUMNS: {actual_columns}
         
         PROTOCOL:
-        1. Use 'df'. Use 'artist_name', 'track_name', and 'genre'.
+        1. Use 'df'. For Artist use 'artist_name', for Track use 'track_name', and for Genre use 'genre'.
         2. Visuals: Bg: '{BRAND_COLORS['bg']}', Primary: '{BRAND_COLORS['primary']}'.
         3. Use plt/sns if you need to make a plot. Do not call st.pyplot().
         4. Provide a clear text 'Final Answer'.
-        5. IMPORTANT: Your Final Answer must be a human-readable summary ONLY. 
-           Do NOT include any Python code, 'import' statements, or backticks (```) in your final response. 
-           The user cannot run code; they only want the answer and the chart if that helps you support the answer. DO NOT make a plot if this wasnt asked. 
-           In this case, give a more explicit answer, so explain roughly what you did to make the conclusion. 
-           DONT MAKE A CHART UNLESS ASKED
-        6. stucture of answer if only text: 1 sentence summary, 2–4 key stats, 1 comparison or interpretation, 1 takeaway
+
+        ANSWER:
+        - Your Final Answer should be human-readable text. 
+        - Keep the answer as short and direct as possible, except if asked for more detail or clarification.
+        - Do NOT include any Python code, 'import' statements, or backticks (```) in your final response. 
+        - stucture of answer if only text: 1 sentence summary, 2–4 key stats, 1 comparison or interpretation, 1 takeaway
+        - If the answer is better suited for a table, include this in the answer with all available, relevant data.
+        - If asked for a list, provide a bullet or numbered list.
+        - Only include a chart if explicitly asked for.
+        - If asked for a comparison, always attempt to provide this in a table format. 
+        - When doing a comparison, attempt to include additional summary statistics over and beyond just features and genres. 
+        - Things to considar could include totals, max, min, outliers, and trends with popularity when appropriate.
+        - Add any additional statistics that could be considared interesting, but always only base this on the actual data. 
+
+
+        
         """
         #allow_dangerous_code is nessesary to run the python code created by llm
         return create_pandas_dataframe_agent(
@@ -128,6 +145,9 @@ if st.session_state.get('data_loaded'):
                         if isinstance(answer, list):
                             answer = " ".join([str(i.get('text', '')) if isinstance(i, dict) else str(i) for i in answer])
                         st.markdown(f"<p style='color:{BRAND_COLORS['text']}; font-size:1.1rem;'>{answer}</p>", unsafe_allow_html=True)
+
+                    else:
+                        st.markdown("Analysis failed")
                     
                     if len(fig.get_axes()) > 0:
                         fig.set_facecolor(BRAND_COLORS['bg'])

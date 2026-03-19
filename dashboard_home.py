@@ -1,11 +1,13 @@
 import streamlit as st
 from ANALYSIS_popularity import *
+from styling import apply_design, editorial_header, theme_plotly
 
 st.set_page_config(page_title="Spotify 2023 Global Overview", layout="wide")
+apply_design()
 #AI Usage: figure out hpw to make the different querys for each necessary df
 @st.cache_data
 def load_dashboard_data():
-    conn = sqlite3.connect('data/data/spotify_cleaned.db')
+    conn = sqlite3.connect('data/spotify_cleaned.db')
 
 
     n_artists = pd.read_sql("SELECT COUNT(DISTINCT id) FROM artist_data", conn).iloc[0, 0]
@@ -49,9 +51,7 @@ def load_dashboard_data():
 n_artists, n_songs, top_pop_df, top_5_genres, avg_features, global_avg_pop = load_dashboard_data()
 
 
-st.title("🎵 Spotify 2023 Analysis Overview")
-st.markdown("---")
-
+editorial_header("Data Engineering Analysis", "Spotify Data Analysis Overview")
 
 col1, col2, col3 = st.columns(3)
 col1.metric("Unique Artists", f"{n_artists:,}")
