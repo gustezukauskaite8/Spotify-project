@@ -1,11 +1,11 @@
-streamlit 
+streamlit
 pandas
 numpy
 matplotlib
-seaborn 
-langchain_google_genai 
-langchain_experimental
+seaborn
+langchain-google-genai
+langchain-experimental
+google-generativeai
 plotly
-itertools 
 statsmodels
 
