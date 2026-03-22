@@ -4,8 +4,8 @@ numpy
 matplotlib
 seaborn 
 langchain_google_genai 
-langchain_experimental.agents 
+langchain_experimental
 plotly.express
 itertools 
-statsmodels.api
+statsmodels
 
