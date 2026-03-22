@@ -8,16 +8,16 @@ This repository contains Python scripts used to clean, analyze, and visualize Sp
 ### Cleaning_all.py
 Cleans the raw Spotify database by removing missing or invalid records, standardizing artist names, fixing ID mappings, and preparing a cleaned dataset for analysis.
 
-### Analysis_eras.py / Talisha_Eras_Profiling.py
+### ANALYSIS_eras.py / Talisha_Eras_Profiling.py
 Analyzes music characteristics across decades. Creates heatmaps and bar charts showing how audio features such as energy, danceability, and valence evolve over time.
 
-### Analysis_features.py / CHOSEN_analysis_features.py
+### ANALYSIS_features.py / CHOSEN_analysis_features.py
 Explores track-level audio features. Includes feature distributions, correlations, popularity analysis, mood quadrants (valence vs energy), and identification of artists that dominate top feature values.
 
-### Analysis_genres.py
+### ANALYSIS_genres.py
 Examines genre patterns, including feature profiles of common and popular genres and combinations of genres that frequently appear together.
 
-### Analysis_popularity.py
+### ANALYSIS_popularity.py
 Investigates artist and track popularity. Includes follower analysis, collaboration vs. solo comparisons, popularity trends, regression analysis, and artist tier classification.
 
 ### CHOSEN_analysis_album.py
