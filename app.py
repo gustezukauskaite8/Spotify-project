@@ -1,9 +1,6 @@
 import streamlit as st
 import sqlite3
 
-
-connection = sqlite3.connect('data/spotify_cleaned.db')
-query = f"SELECT * FROM artist_data"
 home_page = st.Page("dashboard_home.py", title="Main overview", default=True)
 artist_page = st.Page("pages/artists_app.py", title="Artists")
 features_page = st.Page("pages/features_app.py", title="Features")

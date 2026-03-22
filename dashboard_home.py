@@ -1,6 +1,6 @@
 import streamlit as st
 from ANALYSIS_popularity import *
-from styling import apply_design, editorial_header, theme_plotly
+from styling import apply_design, editorial_header
 
 st.set_page_config(page_title="Spotify 2023 Global Overview", layout="wide")
 apply_design()

@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import statsmodels.api as sm
+from styling import apply_design, theme_plotly
+
+apply_design()
 
 db_path = os.path.join('data', 'spotify_cleaned.db')
 connection = sqlite3.connect(db_path)
@@ -32,7 +35,7 @@ def top10_followers(df):
 def top10_popularity_chart(df):
     fig, ax = plt.subplots(figsize=(8, 5))
     top10 = df.nlargest(10, "artist_popularity")
-    ax.barh(top10['artist_name'], top10['artist_popularity'], color='skyblue')
+    ax.barh(top10['name'], top10['artist_popularity'], color='#753696')
     ax.set_title("Top 10 Artists by Popularity")
     ax.invert_yaxis()
     return fig
@@ -40,7 +43,7 @@ def top10_popularity_chart(df):
 def top10_follower_chart(df):
     fig, ax = plt.subplots(figsize=(8, 5))
     top10 = df.nlargest(10, "followers")
-    ax.barh(top10['artist_name'], top10['followers'], color= '#83AD6C')
+    ax.barh(top10['name'], top10['followers'], color= '#83AD6C')
     ax.set_title("Top 10 Artists by Followers")
     ax.invert_yaxis()
     return fig

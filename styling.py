@@ -9,26 +9,22 @@ BRAND = {
 }
 
 def apply_design():
-    """Corrected, straightforward targeting for clear inputs"""
     st.markdown(f"""
         <style>
-        /* 1. Global Look */
         .stApp {{
             background-color: {BRAND['sage']};
             color: {BRAND['burgundy']};
         }}
 
-        /* Updated Card Style to prevent overflow */
         [data-testid="stMetric"], .stPlotlyChart {{
             background: rgba(255, 255, 255, 0.2); 
             border: 1px solid {BRAND['pink']};
             border-radius: 10px;
             padding: 15px;
-            overflow: hidden; /* This clips any chart edges that try to poke out */
+            overflow: hidden; 
             box-sizing: border-box;
         }}
 
-        /* Force Plotly container to respect the box width */
         .js-plotly-plot {{
             width: 100% !important;
         }}
@@ -36,12 +32,11 @@ def apply_design():
             padding-bottom: 40px !important;
         }}
 
-        /* Ensure the iframe/container respects the height */
         [data-testid="stPlotlyChart"] {{
             margin-bottom: 20px !important;
             min-height: 450px; /* Forces a minimum height so it doesn't squash */
         }}
-        /* 3. Sidebar Styling */
+
         [data-testid="stSidebar"] {{
             background-color: {BRAND['dark_green']} !important;
         }}
@@ -116,10 +111,6 @@ def theme_plotly(fig):
         font_color=BRAND['burgundy'],
         colorway=[BRAND['pink'], BRAND['dark_green'], BRAND['burgundy']],
         margin=dict(t=30, b=80, l=40, r=40), 
-        xaxis=dict(
-            automargin=False, # This is the "magic" line
-            title_standoff=20 # Pushes the "Year" title away from the axis
-        ),
         autosize=True
     )
     return fig
