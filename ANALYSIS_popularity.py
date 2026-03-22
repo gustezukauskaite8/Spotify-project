@@ -6,7 +6,7 @@ import seaborn as sns
 import numpy as np
 import statsmodels.api as sm
 
-db_path = os.path.join('data', 'spotify_database.db')
+db_path = os.path.join('data', 'spotify_cleaned.db')
 connection = sqlite3.connect(db_path)
 
 ##########################################################################################################################
@@ -21,18 +21,18 @@ rows = cursor.fetchall()
 data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
 
 def unique_arists(df):
-    result = df['name'].nunique()
+    result = df['artist_name'].nunique()
     return print(result)
 
 def top10_followers(df):
     large10_followers = df.nlargest(10, "followers")
-    return large10_followers[['name', 'followers']]
+    return large10_followers[['artist_name', 'followers']]
 
 
 def top10_popularity_chart(df):
     fig, ax = plt.subplots(figsize=(8, 5))
     top10 = df.nlargest(10, "artist_popularity")
-    ax.barh(top10['name'], top10['artist_popularity'], color='skyblue')
+    ax.barh(top10['artist_name'], top10['artist_popularity'], color='skyblue')
     ax.set_title("Top 10 Artists by Popularity")
     ax.invert_yaxis()
     return fig
@@ -40,7 +40,7 @@ def top10_popularity_chart(df):
 def top10_follower_chart(df):
     fig, ax = plt.subplots(figsize=(8, 5))
     top10 = df.nlargest(10, "followers")
-    ax.barh(top10['name'], top10['followers'], color= '#83AD6C')
+    ax.barh(top10['artist_name'], top10['followers'], color= '#83AD6C')
     ax.set_title("Top 10 Artists by Followers")
     ax.invert_yaxis()
     return fig
@@ -54,7 +54,7 @@ def top10_follower_chart(df):
 def plot_circular_bars(df):
     top10 = df.nlargest(10, 'artist_popularity').copy()
     top10['followers_norm'] = (top10['followers'] / top10['followers'].max()) * 100
-    labels = top10['name']
+    labels = top10['artist_name']
     pop_values = top10['artist_popularity']
     fol_values = top10['followers_norm']
 
@@ -77,7 +77,7 @@ def scatterplot_popularity(df):
     plt.figure(figsize=(12, 8))
     plt.scatter(top25['followers'], top25['artist_popularity'], color='purple')
     for i, row in top25.iterrows():
-        plt.annotate(row['name'], (row['followers'], row['artist_popularity']),
+        plt.annotate(row['artist_name'], (row['followers'], row['artist_popularity']),
                      fontsize=9, alpha=0.7)
     plt.xscale('log')
 
@@ -267,30 +267,45 @@ def relation_popularity_followers(df):
     plt.title("Popularity VS Logarithm of Followers")
     plt.show()
 
-
 def over_performers(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
+    # 1. Deduplicate: One row per artist with their max stats
+    # We filter for popularity > 5 to remove 'junk' uploads like 'dumbbb...'
+    df_unique = df[df['artist_popularity'] > 5].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
 
+    # 2. Run Regression on unique artists
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    over_performers = df.sort_values(by = "residual", ascending = False).head(10)
-    print("\n Over-Performers (High Popularity - Low Followers)")
-    print(over_performers[["name", "artist_popularity", "followers"]])
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique over-performers
+    return df_unique.sort_values(by="residual", ascending=False).head(3)[["artist_name", "artist_popularity", "followers"]]
+
+
 
 def legacy_artists(df):
-    X = np.log1p(df["followers"])
-    Y = df["artist_popularity"]
+    # 1. Deduplicate: One row per artist
+    # We filter followers > 1000 so we only look at established artists
+    df_unique = df[df['followers'] > 1000].groupby('artist_name').agg({
+        'followers': 'max',
+        'artist_popularity': 'max'
+    }).reset_index()
 
+    # 2. Run Regression
+    X = np.log1p(df_unique["followers"])
+    Y = df_unique["artist_popularity"]
     X = sm.add_constant(X)
     model = sm.OLS(Y, X).fit()
-    df["residual"] = model.resid
-    legacy_artist = df.sort_values(by = "residual", ascending = True).head(10)
-    print("\n Legacy artists (Low Popularity - High Followers)")
-    print(legacy_artist[["name", "artist_popularity", "followers"]])
-
-
+    
+    df_unique["residual"] = model.resid
+    
+    # 3. Return Top 3 unique legacy artists
+    return df_unique.sort_values(by="residual", ascending=True).head(3)[["artist_name", "artist_popularity", "followers"]]
 
 
 ##########################################################################################################################
@@ -318,16 +333,28 @@ def plot_artist_tiers(df):
     plt.tight_layout() 
     plt.show()
 
-plot_artist_tiers(data)
 
+if __name__ == "__main__":  
+    plot_artist_tiers(data)
+    scatterplot_popularity(data)
+    plot_circular_bars(data)
+    print(top10_followers(data))
 
-scatterplot_popularity(data)
-#plot_circular_bars(data)
-#print(top10_followers(data))
-#print(topfollow_barcharts(data))
-#data = genre_count(data)
-#print(top10_genre('pop',data))
-#plot_genre_boxplot(data) 
 
 connection.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

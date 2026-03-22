@@ -32,6 +32,15 @@ def apply_design():
         .js-plotly-plot {{
             width: 100% !important;
         }}
+        .stPlotlyChart > div > div {{
+            padding-bottom: 40px !important;
+        }}
+
+        /* Ensure the iframe/container respects the height */
+        [data-testid="stPlotlyChart"] {{
+            margin-bottom: 20px !important;
+            min-height: 450px; /* Forces a minimum height so it doesn't squash */
+        }}
         /* 3. Sidebar Styling */
         [data-testid="stSidebar"] {{
             background-color: {BRAND['dark_green']} !important;
@@ -60,6 +69,33 @@ def apply_design():
         .stMultiSelect input, [data-baseweb="typeahead"] {{
             color: black !important;
         }}
+
+        /* 7. Table Styling - Making them "Pop" like cards */
+        [data-testid="stTable"], [data-testid="stDataFrame"] {{
+            background-color: rgba(255, 255, 255, 0.15); /* Slightly lighter than background */
+            border: 2px solid {BRAND['pink']}; /* Thicker border as requested */
+            border-radius: 10px;
+            padding: 10px;
+        }}
+
+        /* Styling the header row of the tables */
+        [data-testid="stTable"] thead tr th {{
+            background-color: {BRAND['dark_green']} ;
+            color: #F5F5DC ;
+            font-weight: bold !important;
+            border-bottom: 3px solid {BRAND['pink']} ;
+        }}
+
+        /* Making table rows slightly transparent to let sage peek through */
+        [data-testid="stTable"] tbody tr {{
+            background-color: transparent !important;
+            color: {BRAND['burgundy']} !important;
+        }}
+
+        /* Add a hover effect to rows for interactivity */
+        [data-testid="stTable"] tbody tr:hover {{
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }}
         </style>
     """, unsafe_allow_html=True)
 
@@ -79,6 +115,11 @@ def theme_plotly(fig):
         plot_bgcolor='rgba(0,0,0,0)',
         font_color=BRAND['burgundy'],
         colorway=[BRAND['pink'], BRAND['dark_green'], BRAND['burgundy']],
-        margin=dict(t=30, b=10, l=10, r=10)
+        margin=dict(t=30, b=80, l=40, r=40), 
+        xaxis=dict(
+            automargin=False, # This is the "magic" line
+            title_standoff=20 # Pushes the "Year" title away from the axis
+        ),
+        autosize=True
     )
     return fig

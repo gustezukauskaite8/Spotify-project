@@ -4,7 +4,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from Spotify_project import top10_followers, legacy_artists, over_performers
+from ANALYSIS_popularity import top10_followers, legacy_artists, over_performers
 import numpy as np
 import plotly.express as px
 import statsmodels.api as sm
