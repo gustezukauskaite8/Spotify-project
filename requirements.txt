@@ -5,7 +5,7 @@ matplotlib
 seaborn 
 langchain_google_genai 
 langchain_experimental
-plotly.express
+plotly
 itertools 
 statsmodels
 
