@@ -36,5 +36,5 @@ Genre analysis dashboard that displays genre statistics, top artists and songs, 
 
 ### AI analyst.py (BETA)
 This dashboard features an integrated AI chatbot that acts as an Spotify data consultant/analyst. It allows users to ask questions about the data in natural language. It is powered by the Gemini 2.5 Flash engine via the LangChain pandas_dataframe_agent. This agent receives a filtered dataset based on the users choices. It then takes a question as input and converts it to Python code to perform computations, analysis and visualisation in real time. 
-# Important! BETA
+#### Important! BETA
 This feature is currently in Beta. As an LLM based tool, it may occasionally hallucinate or provide incorrect statistical interpretations. This chatbot was tested enough to work as an extra feature for the dashboard. 
