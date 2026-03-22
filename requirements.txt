@@ -3,7 +3,6 @@ pandas
 numpy
 matplotlib
 seaborn 
-os
 langchain_google_genai 
 langchain_experimental.agents 
 plotly.express
