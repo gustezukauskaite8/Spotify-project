@@ -1,10 +1,7 @@
-
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.express as px
 import sqlite3
-import time
 from styling import apply_design, editorial_header, theme_plotly
 
 apply_design()
@@ -20,10 +17,6 @@ data = pd.DataFrame(rows, columns= [x[0] for x in cursor.description])
 st.markdown("---")
 editorial_header("Data Engineering Analysis", "Spotify Artist Dashboard")
 
-# -------------------------------------------------------
-# USER INPUT
-# -------------------------------------------------------
-
 artist_input = st.text_input("Enter Artist Name")
 
 if artist_input:
@@ -35,10 +28,6 @@ if artist_input:
     else:
 
         artist = artist_row.iloc[0]
-
-        # -------------------------------------------------------
-        # BASIC ARTIST INFO
-        # -------------------------------------------------------
 
         st.subheader(f"Artist Overview: {artist['name']}")
 
@@ -91,8 +80,7 @@ if artist_input:
             "album_name": "Album Name",
             "album_popularity": "Album Popularity"
         })
-        st.dataframe(top.style.set_table_styles(
-            [{"selector": "th", "props": [("background-color", "#83AD6C"), ("color", "#220C10")]}]))
+        st.table(top)
 
         st.subheader("Album Release Timeline")
         al = albums[mask].copy()
@@ -103,9 +91,7 @@ if artist_input:
         tl["albums_cumulative"] = tl["albums"].cumsum()
 
         fig = px.line(tl, x="year", y="albums_cumulative", markers=True)
-        fig.update_traces(line=dict(color="#753696"))
-        fig.update_layout(plot_bgcolor="#83AD6C", paper_bgcolor="#83AD6C", font=dict(color="#220C10"))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(theme_plotly(fig), use_container_width=True)
 
         st.subheader("Audio Feature Comparison")
         af = artist_tracks.merge(features, left_on="track_id", right_on="id", how="left")
@@ -114,12 +100,10 @@ if artist_input:
         y_feat = st.selectbox("Select Y-axis feature", cols, index=1)
 
         fig = px.scatter(features, x=x_feat, y=y_feat, opacity=0.2, title=f"{x_feat} vs {y_feat}")
-        fig.update_traces(marker=dict(color="#753696", size=2))
         fig.add_scatter(x=af[x_feat], y=af[y_feat], mode="markers",
                         marker=dict(color="#E2B4BD", size=12, line=dict(color="#220C10", width=2)),
                         name=artist["name"], showlegend=True)
-        fig.update_layout(plot_bgcolor="#83AD6C", paper_bgcolor="#83AD6C", font=dict(color="#220C10"))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(theme_plotly(fig), use_container_width=True)
 
         st.subheader("Compare With Another Artist")
         other_name = st.selectbox("Select artist to compare", data["name"].sort_values())
@@ -132,14 +116,4 @@ if artist_input:
                 other["name"]: [other["artist_popularity"], fmt(other["followers"]), genres_str(other)]
             }, index=["Popularity", "Followers", "Genres"])
 
-
-            def hi(row):
-                if row.name == "Genres":
-                    return ["color:#220C10"] * len(row)
-                numeric_row = pd.to_numeric([str(v).replace(",", "") for v in row], errors="coerce")
-                m = numeric_row.max()
-                return ["background-color: #E2B4BD; color:#220C10" if numeric_row[i] == m else "color:#220C10" for i in
-                        range(len(row))]
-
-
-            st.dataframe(comp.style.apply(hi, axis=1))
+            st.table(comp)
