@@ -8,4 +8,5 @@ langchain-experimental
 google-generativeai
 plotly
 statsmodels
+tabulate
 
