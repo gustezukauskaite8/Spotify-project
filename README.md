@@ -1,7 +1,9 @@
 # Spotify Data Analysis Dashboard
 ## Overview
 
-This repository contains Python scripts used to clean, analyze, and visualize Spotify data stored in a SQLite database (data/spotify_database.db). The project explores patterns in music features, genres, popularity, artists, and albums, and presents insights through analyses and a Streamlit dashboard.
+This repository contains Python scripts used to clean, analyze, and visualize Spotify data stored in a SQLite database (data/spotify_database.db). The project explores patterns in music features, genres, popularity, artists, and albums, and presents insights through analyses and a Streamlit dashboard. 
+
+In order to see the created dashboard, open the file "app.py", open a terminal and type in "streamlit run app.py". Enjoy!:)
 
 ## Main Components
 
